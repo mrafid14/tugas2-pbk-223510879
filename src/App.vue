@@ -21,16 +21,22 @@
 
     <div class="expenses">
       <h2>Daftar Pengeluaran</h2>
-      <transition-group name="fade">
-        <li v-for="(expense, index) in expenses" :key="index" :class="{ 'highlight': expense.amount > limit }">
-          <span class="description">{{ expense.description }}</span> 
-          <span class="amount">{{ expense.amount !== '' ? formatRupiah(expense.amount) : 'Mystery Price' }}</span>
-          <button @click="removeExpense(index)" class="delete-button">Hapus</button>
-        </li>
-      </transition-group>
+      <ul> 
+        <transition-group name="fade">
+          <li v-for="(expense, index) in expenses" :key="index" :class="{ 'highlight': expense.amount > limit }">
+            <span class="description">{{ expense.description }}</span> 
+            <span class="amount">{{ expense.amount !== '' ? formatRupiah(expense.amount) : 'Mystery Price' }}</span>
+            <button @click="removeExpense(index)" class="delete-button">Hapus</button>
+          </li>
+        </transition-group>
+      </ul> 
+      <div>Total Pengeluaran: {{ formatRupiah(totalAmount) }}</div>
     </div>
   </div>
 </template>
+
+
+
 
 <script>
 export default {
@@ -42,7 +48,8 @@ export default {
         amount: ''
       },
       expenses: [],
-      limit: 50000
+      limit: 50000,
+      totalAmount: 0 
     };
   },
   methods: {
@@ -50,16 +57,25 @@ export default {
       this.expenses.push({...this.newExpense});
       this.newExpense.description = '';
       this.newExpense.amount = '';
+      this.calculateTotal(); 
     },
     removeExpense(index) {
       this.expenses.splice(index, 1);
+      this.calculateTotal(); 
     },
     formatRupiah(amount) {
       return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(amount);
+    },
+    calculateTotal() {
+      this.totalAmount = this.expenses.reduce((acc, expense) => acc + parseFloat(expense.amount), 0);
     }
   }
 };
 </script>
+
+<style scoped>
+
+</style>
 
 <style scoped>
 body {
